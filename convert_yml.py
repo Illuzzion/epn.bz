@@ -29,18 +29,18 @@ def dump_md(fn):
         result = fn(*args, **kwargs)
         for offer in result:
             f_name = offer['id'] + '.md'
-            header = dict(
-                Title=offer['name'],
-                Slug=offer['name_slug'],
-                Date=datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-                Author='admin',
-                Category=offer['category_slug'],
-                RuCategory=offer['category'],
-                Price=offer['price'],
-                Status='published'
+            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            header = (
+                ('Title', offer['name']),
+                ('Slug', offer['name_slug']),
+                ('Date', date),
+                ('Author', 'admin'),
+                ('Category', offer['category_slug']),
+                ('RuCategory', offer['category']),
+                ('Price', offer['price']),
+                ('Status', 'published'),
             )
-            fields_order = ('Title', 'Slug', 'Date', 'Author', 'Category', 'RuCategory', 'Price', 'Status')
-            data = ["{key}: {value}\n".format(key=name, value=header[name]) for name in fields_order]
+            data = ["{key}: {value}\n".format(key=name, value=value) for name, value in header]
             data.append('\n[![{alt}]({url})'.format(alt='', url=offer['picture']))
             data.append('\n[{text}]({url})'.format(text='Купить на AliExpress', url=offer['url']))
 
