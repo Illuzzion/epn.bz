@@ -41,8 +41,8 @@ def dump_md(fn):
                 ('Status', 'published'),
             )
             data = ["{key}: {value}\n".format(key=name, value=value) for name, value in header]
-            data.append('\n[![{alt}]({url})'.format(alt='', url=offer['picture']))
-            data.append('\n[{text}]({url})'.format(text='Купить на AliExpress', url=offer['url']))
+            data.append('\n![{alt}]({url})'.format(alt='', url=offer['picture']))
+            data.append('\n[{text}]: {url}'.format(text='Купить на AliExpress', url=offer['url']))
 
             with open(os.path.join('out', f_name), mode='w') as f:
                 f.writelines(data)
@@ -59,7 +59,7 @@ def get_categories(cat_data):
 def offers(of_data, cat_dict, hash):
     WORDS_IN_NAME = 5
 
-    for offer in of_data:
+    for num, offer in enumerate(of_data):
         tmp = {inner.tag: inner.text for inner in offer if inner.text}
         tmp['category'] = cat_dict.get(tmp['categoryId'], None)
 
@@ -77,6 +77,9 @@ def offers(of_data, cat_dict, hash):
             )
         )
         tmp['name_slug'] = '-'.join([tmp['id'], tmp_slug])
+        # counter
+        if num % 1000 == 0:
+            print(num)
         yield tmp
 
 
