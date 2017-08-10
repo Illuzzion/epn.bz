@@ -57,18 +57,26 @@ def get_categories(cat_data):
 
 @dump_md
 def offers(of_data, cat_dict, hash):
+    WORDS_IN_NAME = 5
+
     for offer in of_data:
         tmp = {inner.tag: inner.text for inner in offer if inner.text}
         tmp['category'] = cat_dict.get(tmp['categoryId'], None)
+
         assert tmp['category'], 'category in None {}'.format(tmp)
+
         tmp['url'] = str(tmp['url']).replace('__DEEPLINK-HASH__', hash)
         # перенесем атрибуты
         for k, v in offer.attrib.items():
             tmp[k] = v
 
         tmp['category_slug'] = slugify(tmp['category'])
-        tmp['name_slug'] = slugify(tmp['name'])
-
+        tmp_slug = slugify(
+            '-'.join(
+                [word for word in tmp['name'].split()][:WORDS_IN_NAME]
+            )
+        )
+        tmp['name_slug'] = '-'.join([tmp['id'], tmp_slug])
         yield tmp
 
 
