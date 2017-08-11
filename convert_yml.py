@@ -31,7 +31,7 @@ def dump_md(fn):
             f_name = offer['id'] + '.md'
             offer['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
             offer['title'] = offer.pop('name')
-            offer['ali_url'] = offer.pop('url')
+            offer['aliurl'] = offer.pop('url')
             offer['slug'] = offer.pop('name_slug')
             exclude = ('available', 'categoryId', 'id')
             data = ["%s: %s\n" % (name.capitalize(), value) for name, value in offer.items() if name not in exclude]
