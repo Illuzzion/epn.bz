@@ -33,6 +33,9 @@ def dump_md(fn):
             offer['title'] = offer.pop('name')
             offer['aliurl'] = offer.pop('url')
             offer['slug'] = offer.pop('name_slug')
+            offer['RuCategory'] = offer['category']
+            offer['category'] = offer.pop('category_slug')
+
             exclude = ('available', 'categoryId', 'id')
             data = ["%s: %s\n" % (name.capitalize(), value) for name, value in offer.items() if name not in exclude]
 
