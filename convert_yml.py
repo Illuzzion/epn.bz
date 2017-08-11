@@ -29,20 +29,12 @@ def dump_md(fn):
         result = fn(*args, **kwargs)
         for offer in result:
             f_name = offer['id'] + '.md'
-            date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-            header = (
-                ('Title', offer['name']),
-                ('Slug', offer['name_slug']),
-                ('Date', date),
-                ('Author', 'admin'),
-                ('Category', offer['category_slug']),
-                ('RuCategory', offer['category']),
-                ('Price', offer['price']),
-                ('Status', 'published'),
-            )
-            data = ["{key}: {value}\n".format(key=name, value=value) for name, value in header]
-            data.append('\n![{alt}]({url})'.format(alt='', url=offer['picture']))
-            data.append('\n[{text}]: {url}'.format(text='Купить на AliExpress', url=offer['url']))
+            offer['date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+            offer['title'] = offer.pop('name')
+            offer['ali_url'] = offer.pop('url')
+            offer['slug'] = offer.pop('name_slug')
+            exclude = ('available', 'categoryId', 'id')
+            data = ["%s: %s\n" % (name.capitalize(), value) for name, value in offer.items() if name not in exclude]
 
             with open(os.path.join('out', f_name), mode='w') as f:
                 f.writelines(data)
@@ -76,7 +68,7 @@ def offers(of_data, cat_dict, hash):
                 [word for word in tmp['name'].split()][:WORDS_IN_NAME]
             )
         )
-        tmp['name_slug'] = '-'.join([tmp['id'], tmp_slug])
+        tmp['name_slug'] = '-'.join([tmp_slug, tmp['id']])
         # counter
         if num % 1000 == 0:
             print(num)
