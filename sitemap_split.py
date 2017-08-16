@@ -1,51 +1,48 @@
-from lxml import etree, objectify
 import argparse
-
-url_template = """<url>
-<loc>%s</loc>
-<lastmod>%s</lastmod>
-<changefreq>%s</changefreq>
-<priority>%s</priority>
-</url>
-"""
+from lxml import etree
 
 
 def parse_args():
     args = argparse.ArgumentParser()
     args.description = 'split sitemap'
     args.add_argument('sitemap', help='path to input sitemap')
-    args.add_argument('-m', '--maxurls', type=int, default=None, help='max urls in small sitemap')
+    args.add_argument('-p', '--parts', type=int, default=None, help='count of small sitemaps')
     return args.parse_args()
 
 
-def print_xml_data(obj):
-    print obj.localname
-    # print obj.tag, obj.text, obj.attrib, obj.namespace
+def normalize_node_name(node):
+    if node.tag.startswith('{'):
+        last = node.tag.index('}')
+        node.tag = node.tag[last + 1:]
+    return node
+
+
+def get_url_text(url_node):
+    url_tag = normalize_node_name(url_node).tag
+    params = ["<{tag}>{text}</{tag}>".format(tag=normalize_node_name(param).tag, text=param.text) for param in url]
+    return "<{tag}>\n{inner}\n</{tag}>".format(tag=url_tag, inner="\n".join(params))
 
 
 if __name__ == '__main__':
+    # https://www.sitemaps.org/ru/protocol.html#sitemapXMLExample
     all_args = parse_args()
+
     try:
-        # data = etree.parse(all_args.sitemap, etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
-        data = etree.parse(all_args.sitemap)
-        objectify.deannotate(data, cleanup_namespaces=True)
-        etree.cleanup_namespaces(data)
+        data = etree.parse(all_args.sitemap, etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
 
         print 'sitemap loaded'
-        urlset = data.getroot()
+        root = data.getroot()
+        print 'found', len(root), 'urls'
+
+        if not all_args.parts:
+            all_args.parts = (len(root) / 50000) + 1
+            print all_args.parts
+
+        for index, url in enumerate(root):
+            print 'sitemap' + index/all_args.parts
+            print get_url_text(url)
 
 
-        # print urlset.findall('url')
-
-
-        urls = urlset.xpath('*')
-
-        for index, url in enumerate(urlset):
-            # print url.tag, url.text, url.attrib
-
-            for param in url:
-                print param.tag
-                # print url_template % tuple(url.xpath('*/text()'))
 
 
 
