@@ -1,3 +1,4 @@
+# coding: utf-8
 import argparse
 from lxml import etree
 
@@ -36,15 +37,25 @@ if __name__ == '__main__':
 
         if not all_args.parts:
             all_args.parts = (len(root) / 50000) + 1
-        urls_in_sitemap = len(root)/all_args.parts
-        print 'urls_in_sitemap %s' % urls_in_sitemap
+        print 'using parts:', all_args.parts
+
+        urls_in_sitemap = len(root) / all_args.parts
+
+        print 'urls_in_sitemap: %s' % urls_in_sitemap
+
+        splited_urls = [list() for _ in range(all_args.parts)]
 
         for index, url in enumerate(root):
-            smindex = index/urls_in_sitemap
-            print 'sitemap%d' % (smindex)
-            if smindex > 0:
-                print smindex
-            print get_url_text(url)
+            part = index / urls_in_sitemap
+            if part >= all_args.parts:
+                print 'remainder', len(root) % all_args.parts
+                break
+            splited_urls[part].append(get_url_text(url))
+
+        # остаток
+        # if len(root) % all_args.parts:
+        #     for url in root[index:]:
+        #         splited_urls[part].append(get_url_text(url))
 
 
 
