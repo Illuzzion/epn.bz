@@ -63,7 +63,14 @@ if __name__ == '__main__':
 
         print 'sitemap loaded'
         root = data.getroot()
-        print 'found', len(root), 'urls'
+        print 'found urls:', len(root)
+
+        baseurl = ''
+        for param in root[0]:
+            if normalize_node_name(param).tag == 'loc':
+                baseurl = param.text
+
+        print 'using baseurl:', baseurl
 
         if not all_args.parts:
             all_args.parts = (len(root) / MAX_SITEMAP_URLS) + 1
@@ -71,13 +78,13 @@ if __name__ == '__main__':
 
         urls_in_sitemap = len(root) / all_args.parts
 
-        print 'urls_in_sitemap: %s' % urls_in_sitemap
+        print 'urls in sitemap part: %s' % urls_in_sitemap
 
         slice_list = [slice(i * urls_in_sitemap, (i + 1) * urls_in_sitemap) for i in range(all_args.parts)]
         # заменим последний слайс и включим в него все оставшиеся записи
         slice_list[-1] = slice(slice_list[-1].start, len(root))
 
-        gen_sitemap_index(len(slice_list), baseurl='http://yandex.ru')
+        gen_sitemap_index(len(slice_list), baseurl=baseurl)
 
         for index, cur_slice in enumerate(slice_list):
             gen_sitemap_part(root[cur_slice], name='sitemap%d.xml' % (index + 1))
