@@ -1,13 +1,14 @@
 # coding: utf-8
 import argparse
 from lxml import etree
+from urlparse import urlparse
 
 MAX_SITEMAP_URLS = 50000
 
 
 def parse_args():
     args = argparse.ArgumentParser()
-    args.description = 'split sitemap'
+    args.description = 'split big sitemap to few small sitemaps'
     args.add_argument('sitemap', help='path to input sitemap')
     args.add_argument('-p', '--parts', type=int, default=None, help='count of small sitemaps')
     return args.parse_args()
@@ -94,7 +95,8 @@ if __name__ == '__main__':
         baseurl = ''
         for param in root[0]:
             if normalize_node_name(param).tag == 'loc':
-                baseurl = param.text
+                url_params = urlparse(param.text)
+                baseurl = url_params.scheme + '://' + url_params.netloc
 
         print 'using baseurl:', baseurl
 
