@@ -14,19 +14,39 @@ def parse_args():
 
 
 def normalize_node_name(node):
+    """
+    убираем нэймспейсы в именах тегов
+
+    :param node: xml node с нэймспесом
+    :return: xml node без нэймспейса
+    """
     if node.tag.startswith('{'):
-        last = node.tag.index('}')
-        node.tag = node.tag[last + 1:]
+        start = node.tag.index('}') + 1
+        node.tag = node.tag[start:]
     return node
 
 
 def get_url_text(url_node):
+    """
+    присылают xml node с неймспесами, возвращаем очищенную строку
+
+    :param url_node: xml node
+    :return: str
+    """
     url_tag = normalize_node_name(url_node).tag
     params = ["<{tag}>{text}</{tag}>".format(tag=normalize_node_name(param).tag, text=param.text) for param in url_node]
     return "<{tag}>\n{inner}\n</{tag}>\n".format(tag=url_tag, inner="\n".join(params))
 
 
 def gen_sitemap_index(count, baseurl, filename='sitemap_index.xml'):
+    """
+    Пишем индекс сайтмэпов
+
+    :param count: количество sitemap в индексе
+    :param baseurl: базовый url
+    :param filename: имя индекс файла
+    :return: None
+    """
     INDEX_BEGIN = '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     INDEX_END = '</sitemapindex>'
     baseurl = baseurl if baseurl.endswith('/') else baseurl + '/'
@@ -37,11 +57,17 @@ def gen_sitemap_index(count, baseurl, filename='sitemap_index.xml'):
             f.write(
                 '<sitemap>\n<loc>{baseurl}sitemap{index}.xml</loc>\n</sitemap>\n'.format(baseurl=baseurl, index=i + 1)
             )
-
         f.write(INDEX_END)
 
 
 def gen_sitemap_part(url_list, name):
+    """
+    пишем в файл часть сайтмэпов
+
+    :param url_list: список с url
+    :param name: имя файла
+    :return: None
+    """
     SITEMAP_BEGIN = '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ' \
                     'xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ' \
                     'xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 ' \
