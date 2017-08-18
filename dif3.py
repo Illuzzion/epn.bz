@@ -53,12 +53,6 @@ if __name__ == '__main__':
     a_struct = htmlstruct2list(a_list)
     b_struct = htmlstruct2list(b_list)
 
-    # for el in a_struct:
-    #     print el
-
-    # for el in b_struct:
-    #     print el
-
     difres = difflib.SequenceMatcher(None, a_struct, b_struct)
     print difres.ratio()
 

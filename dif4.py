@@ -31,13 +31,25 @@ def get_html_code(node):
     return tostring(node, encoding="utf8").strip().decode('utf-8')
 
 
+def get_string_dif(str1, str2):
+    if isinstance(str1, (unicode,)) and isinstance(str2, (unicode,)):
+        strdif = difflib.SequenceMatcher(None, str1, str2)
+        # match_ratio = strdif.ratio()
+        # print 'string match: %s%%' % match_ratio
+        return [(reason, slice(s1, s2), slice(s3, s4))
+                for reason, s1, s2, s3, s4 in strdif.get_opcodes()
+                if reason is not 'equal']
+        # print str1[difference[1]:difference[2]], '->', str2[difference[3]:difference[4]]
+
+
 if __name__ == '__main__':
-    a_fname, b_fname = '1.html', '2.html'
+    a_fname, b_fname = '3.html', '4.html'
 
     a_root = open_html(a_fname)
     b_root = open_html(b_fname)
 
-    xpath_value = 'body'
+    xpath_value = 'head'
+    print 'xpath: %s' % xpath_value
 
     # возьмём 0 элемент
     a_part = a_root.xpath(xpath_value)[0]
@@ -50,13 +62,17 @@ if __name__ == '__main__':
     b_list = html2list(b_html)
     b_struct = htmlstruct2list(b_list)
 
-    difres = difflib.SequenceMatcher(None, a_struct, b_struct)
-    print 'match: %s%%' % (difres.ratio() * 100)
+    difres = difflib.SequenceMatcher(None, a_list, b_list)
+    print 'page struct match: %s%%' % (difres.ratio() * 100)
 
     for el in difres.get_opcodes():
         a_result = slice(el[1], el[2])
         b_result = slice(el[3], el[4])
 
         if el[0] is not 'equal':
-            for not_match_a, not_match_b in zip(a_struct[a_result], b_struct[b_result]):
-                print "\n%s\na=%s\nb=%s" % (el[0], not_match_a, not_match_b)
+            for not_match_a, not_match_b in zip(a_list[a_result], b_list[b_result]):
+                print "\n%s\na = %s\nb = %s" % (el[0], not_match_a, not_match_b)
+
+                dif_list = get_string_dif(not_match_a, not_match_b)
+                for d in dif_list:
+                    print d[0], not_match_a[d[1]], not_match_b[d[2]]
