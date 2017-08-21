@@ -96,6 +96,7 @@ if __name__ == '__main__':
         for param in root[0]:
             if normalize_node_name(param).tag == 'loc':
                 url_params = urlparse(param.text)
+                print url_params
                 baseurl = url_params.scheme + '://' + url_params.netloc
 
         print 'using baseurl:', baseurl

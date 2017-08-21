@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+# coding: utf-8
 import argparse
 import datetime
 import functools
@@ -38,9 +39,10 @@ def dump_md(fn):
 
             exclude = ('available', 'categoryId', 'id')
             data = ["%s: %s\n" % (name.capitalize(), value) for name, value in offer.items() if name not in exclude]
+            data = "".join(data).encode('utf-8')
 
             with open(os.path.join('out', f_name), mode='w') as f:
-                f.writelines(data)
+                f.write(data)
         return result
 
     return wrapper
@@ -74,7 +76,7 @@ def offers(of_data, cat_dict, hash):
         tmp['name_slug'] = '-'.join([tmp_slug, tmp['id']])
         # counter
         if num % 1000 == 0:
-            print(num)
+            print num
         yield tmp
 
 
@@ -82,12 +84,12 @@ if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
     arg_parser.description = 'epn.bz yml file converter'
     arg_parser.add_argument('yml_path', help='path to yml file')
-    arg_parser.add_argument('-d', '--deeplink_hash', default='12345678', help='DEEPLINK HASH')
+    arg_parser.add_argument('-d', '--deeplink_hash', default='oudjz68cm8gguxvas1vppciwis59uqxb', help='DEEPLINK HASH')
     args = arg_parser.parse_args()
 
     # создадим XMLParser с кодировкой и прочими плюшками, чтобы избежать ошибок при открытии
     data = etree.parse(args.yml_path, etree.XMLParser(encoding='utf-8', ns_clean=True, recover=True))
-    print('xml tree loaded!')
+    print 'xml tree loaded!'
 
     yml_catalog = data.getroot()
 
@@ -97,11 +99,11 @@ if __name__ == '__main__':
         for sub in shop:
             if sub.tag == 'categories':
                 categories_dict = get_categories(sub)
-    print('categories loaded')
+    print 'categories loaded'
 
     # теперь грузим оферы
     for shop in yml_catalog:
         for sub in shop:
             if sub.tag == 'offers':
                 offers(sub, categories_dict, args.deeplink_hash)
-    print('done')
+    print 'done'
