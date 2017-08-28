@@ -24,7 +24,7 @@ inputElement = driver.find_element_by_name("login")
 inputElement.send_keys(second_login)
 
 inputElement = driver.find_element_by_name("password")
-inputElement.send_keys(second_login)
+inputElement.send_keys(second_password)
 
 driver.find_element_by_name("ok").click()
 
