@@ -1,13 +1,10 @@
 # coding: utf-8
-from selenium import webdriver
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait  # available since 2.4.0
-import time
-from cred import *
 import logging
+import time
+
+from data.cred import *
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 logging.debug('start')
