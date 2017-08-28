@@ -65,6 +65,10 @@ logging.debug('start collecting links')
 orders_list = driver.find_elements_by_css_selector('table#list > tbody > tr > td:nth-child(3) > a')
 logging.debug('end of links collecting')
 
+# WebDriverWait(driver, 100).until(
+#     lambda driver: driver.find_element_by_name(self.locator))
+# driver.find_element_by_name(self.locator).send_keys(value)
+
 # print orders_list
 for el in orders_list:
     # print el, el.get_attribute('href')
