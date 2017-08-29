@@ -115,8 +115,8 @@ if __name__ == '__main__':
 
         gen_sitemap_index(len(slice_list), baseurl=baseurl)
 
-        for index, cur_slice in enumerate(slice_list):
-            gen_sitemap_part(root[cur_slice], name='sitemap%d.xml' % (index + 1))
+        for index, cur_slice in enumerate(slice_list, 1):
+            gen_sitemap_part(root[cur_slice], name='sitemap%d.xml' % index)
 
     except Exception as e:
         print e.args
